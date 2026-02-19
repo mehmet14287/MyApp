@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sohbete Aktarılıyorsunuz...</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f4f4f4; }
+        .container { text-align: center; padding: 20px; background: white; border-radius: 15px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <h2>Sohbet Ekranına Gidiliyor...</h2>
+        <p>Uygulama açılmazsa <a id="app-link" href="#">buraya tıklayın</a>.</p>
+    </div>
+
+    <script>
+        // Senin uygulama bilgilerine göre düzenlendi
+        const schemeUrl = "mss://ScreenChat"; 
+        const playStoreUrl = "https://play.google.com/store/apps/details?id=com.mehmetelif.mssstudio";
+
+        function redirect() {
+            const start = Date.now();
+            
+            // Uygulamayı şema ile açmaya çalış (ScreenChat parametresiyle)
+            window.location.href = schemeUrl;
+
+            // 2 saniye içinde uygulama açılmazsa Play Store'a yönlendir
+            setTimeout(function() {
+                if (Date.now() - start < 2500) {
+                    window.location.href = playStoreUrl;
+                }
+            }, 2000);
+        }
+
+        window.onload = redirect;
+        document.getElementById("app-link").href = schemeUrl;
+    </script>
+</body>
+</html>
