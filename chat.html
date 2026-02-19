@@ -3,42 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sohbete Aktarılıyorsunuz...</title>
+    <title>Uygulamaya Yönlendiriliyorsunuz</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f4f4f4; }
-        .container { text-align: center; padding: 20px; background: white; border-radius: 15px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 10px auto; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h2 { color: #333; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="loader"></div>
-        <h2>Sohbet Ekranına Gidiliyor...</h2>
-        <p>Uygulama açılmazsa <a id="app-link" href="#">buraya tıklayın</a>.</p>
-    </div>
 
-    <script>
-        // Senin uygulama bilgilerine göre düzenlendi
-        const schemeUrl = "mss://ScreenChat"; 
-        const playStoreUrl = "https://play.google.com/store/apps/details?id=com.mehmetelif.mssstudio";
+<div class="card">
+    <div class="loader"></div>
+    <h2>MSS Studio</h2>
+    <p>Sohbet ekranına aktarılıyorsunuz...</p>
+    <p>Uygulama açılmazsa aşağıdaki butona dokunun.</p>
+    <a href="mss://ScreenChat" class="btn" id="manual-link">UYGULAMAYI AÇ</a>
+</div>
 
-        function redirect() {
-            const start = Date.now();
-            
-            // Uygulamayı şema ile açmaya çalış (ScreenChat parametresiyle)
-            window.location.href = schemeUrl;
+<script>
+    // Bilgilerinize göre özelleştirildi
+    const packageId = "com.mehmetelif.mssstudio";
+    const schemeUrl = "mss://ScreenChat";
+    const playStoreUrl = "https://play.google.com/store/apps/details?id=" + packageId;
 
-            // 2 saniye içinde uygulama açılmazsa Play Store'a yönlendir
-            setTimeout(function() {
-                if (Date.now() - start < 2500) {
-                    window.location.href = playStoreUrl;
-                }
-            }, 2000);
-        }
+    // Android "Intent" yapısı (En kesin yöntem)
+    const intentUrl = "intent://ScreenChat#Intent;scheme=mss;package=" + packageId + ";S.browser_fallback_url=" + encodeURIComponent(playStoreUrl) + ";end";
 
-        window.onload = redirect;
-        document.getElementById("app-link").href = schemeUrl;
-    </script>
+    function startRedirect() {
+        const start = Date.now();
+        
+        // 1. Önce Intent URL ile doğrudan uygulamayı tetikle
+        window.location.href = intentUrl;
+
+        // 2. Eğer 2.5 saniye içinde sayfa değişmezse (uygulama açılmazsa) Play Store'a yönlendir
+        setTimeout(function() {
+            if (Date.now() - start < 3000) {
+                window.location.href = playStoreUrl;
+            }
+        }, 2500);
+    }
+
+    // Sayfa yüklenir yüklenmez çalıştır
+    window.onload = function() {
+        // Kullanıcı etkileşimi olmadan bazı tarayıcılar engellediği için butonu da güncelliyoruz
+        document.getElementById("manual-link").href = intentUrl;
+        startRedirect();
+    };
+</script>
+
 </body>
 </html>
